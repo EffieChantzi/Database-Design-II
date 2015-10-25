@@ -1,0 +1,390 @@
+/*****************************************************************************************************************
+  Database Design II - 1DL400
+  Assignment 2:1 - Stock Portfolio Database Project
+  Group 9: Efthymia Chantzi || Huijie Shen || Eleftherios Anagnostopoulos
+  February 22, 2015
+  
+  Description: 
+  		The assignment consists of developing a small stock portfolio database application 
+  		to handle personal stock portfolios, using an object-relational database management system 
+  		(AMOS II - a research prototype system being developed at Uppsala Database Laboratory, Uppsala University) 
+  		that includes an object-relational query language (AMOSQL). 
+******************************************************************************************************************/
+
+create type Stock properties
+	(name Charstring, 
+	 date Date, 
+	 div_sek Real,  
+	 div_perc Real, 
+	 price_change Real, 
+	 buy Real, 
+	 sell Real, 
+	 late Real, 
+	 high Real, 
+	 low Real);
+	
+create Stock(name, date, div_sek, div_perc, price_change, buy, sell, late, high, low) instances
+	:astra1 ("Astra Zeneca", |2003-11-26|, 6.12, 1.1, -3, 347, 347.5, 347.5, 352, 345), 
+	:astra2 ("Astra Zeneca", |2003-11-27|, 6.12, 1.1, 1, 348, 348.5, 348.5,	349.5, 346.5),
+	:astra3 ("Astra Zeneca", |2003-11-28|, 6.12, 1.1, -1, 347, 347.5, 347.5, 348.5, 343),
+	:astra4 ("Astra Zeneca", |2003-12-01|, 6.12, 1.1, 0, 347.5, 348, 347.5, 349, 343.5), 
+	:astra5 ("Astra Zeneca", |2003-12-02|, 6.12, 1.1, -5, 342.5, 343, 342.5, 351, 342), 
+	:astra6 ("Astra Zeneca", |2003-12-03|, 6.12, 1.1, 2.5, 345, 345.5, 345, 349, 343), 
+	:astra7 ("Astra Zeneca", |2003-12-04|, 6.12, 1.6, 0, 345, 345.5, 345, 349.5, 344), 
+	:astra8 ("Astra Zeneca", |2003-12-05|, 6.12, 1.1, -2.5, 342.5, 343, 342.5, 347, 341), 
+	:astra9 ("Astra Zeneca", |2003-12-08|, 6.12, 1.6, -5, 337.5, 338, 337.5, 342, 337), 
+	:astra10 ("Astra Zeneca", |2003-12-09|, 6.12, 1.1, -1, 336, 336.5, 336.5, 341.5, 335.5), 
+	
+	:ericsson1 ("Ericsson B", |2003-11-26|, 0, 0, -0.1, 12.2, 12.3, 12.2, 12.5, 12.2), 
+	:ericsson2 ("Ericsson B", |2003-11-27|, 0, 0, 0.2, 12.3, 12.4, 12.4, 12.4, 12.2), 
+	:ericsson3 ("Ericsson B", |2003-11-28|, 0, 0, -0.2, 12.2, 12.3, 12.2, 12.5, 12.2), 
+	:ericsson4 ("Ericsson B", |2003-12-01|, 0, 0, 0.2, 12.3, 12.4, 12.4, 12.5, 12.2), 
+	:ericsson5 ("Ericsson B", |2003-12-02|, 0, 0, 0.1, 12.5, 12.6, 12.5, 12.7, 12.4), 
+	:ericsson6 ("Ericsson B", |2003-12-03|, 0, 0, 0, 12.5, 12.6, 12.5, 12.7, 12.4), 
+	:ericsson7 ("Ericsson B", |2003-12-04|, 0, 0, 0.3, 12.8, 12.9, 12.8, 13, 12.4), 
+	:ericsson8 ("Ericsson B", |2003-12-05|, 0, 0, -0.4, 12.4, 12.5, 12.4, 12.8, 12.4), 
+	:ericsson9 ("Ericsson B", |2003-12-08|, 0, 0, -0.3, 12.1, 12.2, 12.1, 12.3, 12), 
+	:ericsson10 ("Ericsson B", |2003-12-09|, 0, 0, -0.3, 11.8, 11.9, 11.8, 12.4, 11.8), 
+	
+	:nokia1 ("Nokia SDB", |2003-11-26|, 2.57, 1.9, 0, 136, 136.5, 136, 138, 135.5), 
+	:nokia2 ("Nokia SDB", |2003-11-27|, 2.57, 1.8, 0.5, 136.5, 137, 136.5, 137.5, 136), 
+	:nokia3 ("Nokia SDB", |2003-11-28|, 2.57, 1.9, -0.5, 136, 136.5, 136, 137.5, 135), 
+	:nokia4 ("Nokia SDB", |2003-12-01|, 2.57, 1.9, 0, 135.5, 136, 136, 137.5, 134.5), 
+	:nokia5 ("Nokia SDB", |2003-12-02|, 2.57, 1.9, -0.5, 135.5, 136, 135.5, 137.5, 135), 
+	:nokia6 ("Nokia SDB", |2003-12-03|, 2.57, 1.9, -1, 134.5, 135, 134.5, 136.5, 134), 
+	:nokia7 ("Nokia SDB", |2003-12-04|, 2.57, 1.8, 2.5, 137, 137.5, 137, 138, 134.5), 
+	:nokia8 ("Nokia SDB", |2003-12-05|, 2.57, 1.9, -3, 133.5, 134, 134, 136.5, 133), 
+	:nokia9 ("Nokia SDB", |2003-12-08|, 2.57, 1.9, -3.5, 130.5, 131, 130.5, 133, 130.5), 
+	:nokia10 ("Nokia SDB", |2003-12-09|, 2.57, 1.9, -1.5, 129, 129.5, 129, 132, 129), 
+	
+	:skandia1 ("Skandia", |2003-11-26|, 0.3, 1.3, -0.7, 23.7, 23.8, 23.7, 24.6, 23.6), 
+	:skandia2 ("Skandia", |2003-11-27|, 0.3, 1.2, 1.9, 25.5, 25.6, 25.6, 25.6, 23.4), 
+	:skandia3 ("Skandia", |2003-11-28|, 0.3, 1.2, -0.1, 25.5, 25.6, 25.5, 25.9, 24.8), 
+	:skandia4 ("Skandia", |2003-12-01|, 0.3, 1.1, 0.7, 26.2, 26.3, 26.2, 26.9, 25.8), 
+	:skandia5 ("Skandia", |2003-12-02|, 0.3, 1.1, 0.9, 27, 27.1, 27.1, 27.4, 26.8), 
+	:skandia6 ("Skandia", |2003-12-03|, 0.3, 1.1, -0.5, 26.6, 26.7, 26.6, 27.4, 26.6), 
+	:skandia7 ("Skandia", |2003-12-04|, 0.3, 1.1, -0.2, 26.3, 26.4, 26.4, 26.9, 25.7), 
+	:skandia8 ("Skandia", |2003-12-05|, 0.3, 1.1, 0.3, 26.7, 26.8, 26.7, 26.7, 26.1), 
+	:skandia9 ("Skandia", |2003-12-08|, 0.3, 1.1, -0.5, 26.1, 26.2, 26.2, 26.6, 26.1), 
+	:skandia10 ("Skandia", |2003-12-09|, 0.3, 1.2, -0.3, 25.8, 25.9, 25.9, 26.5, 25.5), 
+	
+	:volvo1 ("Volvo B", |2003-11-26|, 8, 4.7, -2, 214.5, 215, 214.5, 218, 214.5), 
+	:volvo2 ("Volvo B", |2003-11-27|, 8, 4.6, 4.5, 218.5, 219, 219, 219, 215), 
+	:volvo3 ("Volvo B", |2003-11-28|, 8, 4.6, -0.5, 218, 218.5, 218.5, 220, 217.5), 
+	:volvo4 ("Volvo B", |2003-12-01|, 8, 4.6, -1.5, 216.5, 217, 217, 219, 216), 
+	:volvo5 ("Volvo B", |2003-12-02|, 8, 4.6, -1.5, 215, 215.5, 215.5, 218.5, 214.5), 
+	:volvo6 ("Volvo B", |2003-12-03|, 8, 4.6, 2, 217.5, 218, 217.5, 218, 216), 
+	:volvo7 ("Volvo B", |2003-12-04|, 8, 3.6, 5, 222, 222.5, 222.5, 223.5, 217), 
+	:volvo8 ("Volvo B", |2003-12-05|, 8, 4.6, -1.5, 220, 221, 221, 224, 219.5), 
+	:volvo9 ("Volvo B", |2003-12-08|, 8, 3.7, -3, 218, 218.5, 218, 219.5, 217), 
+	:volvo10 ("Volvo B", |2003-12-09|, 8, 3.6, 2.5, 220, 220.5, 220.5, 221, 219); 
+
+create type Index properties 
+	(name Charstring,
+	 date Date, 
+	 afv_general Real, 
+	 afv_it Real);
+	 
+create Index(name, date, afv_general, afv_it) instances 
+	:affar1 ("Affarsvarldens", |2003-11-26|, 181.24, 65.40), 
+	:affar2 ("Affarsvarldens", |2003-11-27|, 183.4, 65.57), 
+	:affar3 ("Affarsvarldens", |2003-11-28|, 182.73, 66.55), 
+	:affar4 ("Affarsvarldens", |2003-12-01|, 184.40, 67.75), 
+	:affar5 ("Affarsvarldens", |2003-12-02|, 184.69, 67.73), 
+	:affar6 ("Affarsvarldens", |2003-12-03|, 185.24, 68.40), 
+	:affar7 ("Affarsvarldens", |2003-12-04|, 186.12, 68.39), 
+	:affar8 ("Affarsvarldens", |2003-12-05|, 185.47, 67.80), 
+	:affar9 ("Affarsvarldens", |2003-12-08|, 183.62, 67.31), 
+	:affar10 ("Affarsvarldens", |2003-12-09|, 184.7, 68.34); 
+
+create type Person properties
+	(id Integer, 
+	 name Charstring, 
+	 portfolios Bag of Integer);
+
+create function newPersonId() -> Integer pid
+	as 
+	begin
+		declare Bag of Integer tempid;
+		set tempid = (select id(p) from Person p);
+		if count(tempid) = 0 then 
+			set pid = 1
+		else 
+			set pid = max(tempid) + 1;
+		return pid;
+	end;
+
+create function createPerson(Charstring person_name) -> Person p 
+	as
+	begin
+		create Person instances p;
+		set id(p) = newPersonId();
+		set name(p) = person_name;
+		set portfolios(p) = Bag();
+		return p;
+	end; 
+
+create Person(id, name, portfolios) instances
+	:pers1 (newPersonId(), "Efthymia Chantzi", Bag()), 
+	:pers2 (newPersonId(), "Huijie Shen", Bag()); 
+	
+set :pers3 = createPerson("Eleftherios Anagnostopoulos");
+
+create type Portfolio properties 
+	(id Integer, 
+	 person Integer, 
+	 purchases Bag of Integer);
+	 
+create function newPortfolioId() -> Integer pid
+	as 
+	begin
+		declare Bag of Integer tempid;
+		set tempid = (select id(p) from Portfolio p);
+		if count(tempid) = 0 then 
+			set pid = 1
+		else 
+			set pid = max(tempid) + 1;
+		return pid;
+	end;
+	
+create Portfolio(id, person, purchases) instances 
+	:port1(newPortfolioId(), 1, Bag()), 
+	:port2(newPortfolioId(), 2, Bag()), 
+	:port3(newPortfolioId(), 3, Bag()); 
+	
+add portfolios(:pers1) = id(:port1);
+add portfolios(:pers2) = id(:port2);
+add portfolios(:pers3) = id(:port3);
+	 
+create type Purchase properties
+	(id Integer,
+	 portfolio Integer,  
+	 stock_name Charstring,
+	 date Date,  
+	 stock_shares Integer, 
+	 price Real);
+	 
+create function newPurchaseId() -> Integer pid
+	as 
+	begin
+		declare Bag of Integer tempid;
+		set tempid = (select id(p) from Purchase p);
+		if count(tempid) = 0 then 
+			set pid = 1
+		else 
+			set pid = max(tempid) + 1;
+		return pid;
+	end;
+	 
+create Purchase(id, portfolio, stock_name, date, stock_shares, price) instances
+	:purch1 (newPurchaseId(), 1, "Astra Zeneca", |2003-11-26|, 500, 347.25), 
+	:purch2 (newPurchaseId(), 1, "Ericsson B", |2003-12-02|, 100, 12.55), 
+	:purch3 (newPurchaseId(), 1, "Astra Zeneca", |2003-12-05|, 1000, 342.75), 
+	:purch4 (newPurchaseId(), 2, "Skandia", |2003-11-27|, 500, 137.25), 
+	:purch5 (newPurchaseId(), 2, "Nokia SDB", |2003-12-04|, 2500, 137.25), 
+	:purch6 (newPurchaseId(), 3, "Volvo B", |2003-12-01|, 5000, 216.75); 
+	
+add purchases(:port1) = id(:purch1);
+add purchases(:port1) = id(:purch2);
+add purchases(:port1) = id(:purch3);
+add purchases(:port2) = id(:purch4);
+add purchases(:port2) = id(:purch5);
+add purchases(:port3) = id(:purch6);
+	
+/*
+	select name(s), date(s), div_sek(s), div_perc(s), price_change(s), buy(s), sell(s), late(s), high(s), low(s) from Stock s;
+	select name(i), date(i), afv_general(i), afv_it(i) from Index i;
+	select id(p), name(p), portfolios(p) from Person p;
+	select id(p), person(p), purchases(p) from Portfolio p;
+	select id(p), portfolio(p), stock_name(p), date(p), stock_shares(p), price(p) from Purchase p;
+*/
+
+/*
+	1.	What days did a stock have a positive price change?
+*/
+
+create function query1(Charstring stock_name) -> Bag of Date 
+	as 
+	select date(s) 
+	from Stock s 
+	where name(s) = stock_name and price_change(s) > 0;
+
+/*
+	query1("Ericsson B");
+*/
+
+/*
+	2.	What has been the difference between buy and sell price for a stock for each day in a period of time?
+*/
+
+create function query2(Charstring stock_name, Date dateFrom, Date dateTo) -> Bag of (Date, Real) 
+	as 
+	select date(s), (buy(s) - sell(s)) 
+	from Stock s 
+	where name(s) = stock_name and date(s) >= dateFrom and date(s) <= dateTo;
+
+/*	
+	query2("Volvo B", |2003-11-26|, |2003-12-06|);
+*/
+
+/*
+	3.	What is the values of the stocks in a portfolio at a given date? 
+*/
+
+create function query3(Portfolio portfolio, Date date) -> Bag of (Charstring, Real)
+	as
+	select name(s), sum(late(s) * stock_shares(p))
+	from Purchase p, Stock s 
+	where id(p) in purchases(portfolio) and name(s) = stock_name(p) and date(s) = date
+	group by name(s);
+
+/*
+	query3(:port1, |2003-12-09|);
+*/
+
+/*
+	4.	What is the current value of a whole portfolio. Consider the value for the latest day in the database as a current value. 
+*/
+
+create function query4(Portfolio portfolio) -> Real 
+	as 
+	sum(select late(s) * stock_shares(p)
+	from Purchase p, Stock s 
+	where id(p) in purchases(portfolio) and name(s) = stock_name(p) and date(s) = max(select date(s) from Stock s));
+
+/*	
+	query4(:port1);
+*/
+
+/*
+	5.	Development of every stock from a portfolio and development of a portfolio in Swedish kronor (SEK) or corresponding currency, 
+		percentage, and in comparison to some index. The development is taken with respect to some period of time.
+*/
+
+create function query5a(Portfolio portfolio, Date dateFrom, Date dateTo) -> (Charstring, Real, Real) 
+	as
+	select distinct stock_name(p), (late(s2) - late(s1)), ((late(s2) - late(s1))*100/late(s1))
+	from Purchase p, Stock s1, Stock s2 
+	where id(p) in purchases(portfolio) and name(s1) = stock_name(p) and name(s2) = stock_name(p) and date(s1) = dateFrom and date(s2) = dateTo;
+
+/*	
+	Development of every stock of a portfolio
+	query5a(:port1, |2003-11-26|, |2003-12-09|);
+*/
+
+create function getPortfolioValue(Portfolio portfolio, Date date) -> Real 
+	as
+	sum(select late(s) * stock_shares(p) 
+	from Purchase p, Stock s 
+	where id(p) in purchases(portfolio) and name(s) = stock_name(p) and date(p) <= date and date(s) = date);
+
+/*	
+	getPortfolioValue(:port1, |2003-12-02|);
+*/
+	
+create function query5b(Portfolio portfolio, Date dateFrom, Date dateTo) -> (Real sekDev, Real relDev) 
+	as
+	begin
+		declare Real startValue, Real endValue; 
+		set startValue = getPortfolioValue(portfolio, dateFrom);
+		set endValue = getPortfolioValue(portfolio, dateTo);
+		set sekDev = endValue - startValue;
+		set relDev = (endValue - startValue) * 100 / startValue;
+		return (sekDev, relDev);
+	end;
+
+/*	
+	Development of the whole portfolio
+	query5b(:port1, |2003-12-08|, |2003-12-09|);
+*/
+
+create function getIndexDev(Charstring indexName, Date dateFrom, Date dateTo) -> Real
+	as 
+	select (afv_general(i2) - afv_general(i1)) * 100 / afv_general(i1)
+	from Index i1, Index i2 
+	where name(i1) = indexName and name(i2) = indexName and date(i1) = dateFrom and date(i2) = dateTo;
+
+/*
+	getIndexDev("Affarsvarldens", |2003-12-08|, |2003-12-09|);
+*/
+
+create function query5c(Portfolio portfolio, Date dateFrom, Date dateTo, Charstring indexName) -> (Real relDev, Real idxDev)
+	as
+	begin
+		declare Real startValue, Real endValue; 
+		set startValue = getPortfolioValue(portfolio, dateFrom);
+		set endValue = getPortfolioValue(portfolio, dateTo);
+		set relDev = (endValue - startValue) * 100 / startValue;
+		set idxDev = getIndexDev(indexName, dateFrom, dateTo);
+		return (relDev, idxDev);
+	end;
+
+/*
+	Comparison to an index
+	query5c(:port1, |2003-12-08|, |2003-12-09|, "Affarsvarldens");
+*/
+
+/*
+	6.	Compare development of one stock to another.
+*/
+
+create function getStockDev(Charstring stock_name, Date dateFrom, Date dateTo) -> Real 
+	as
+	select late(s2) - late(s1) 
+	from Stock s1, Stock s2 
+	where name(s1) = stock_name and name(s2) = stock_name and date(s1) = dateFrom and date(s2) = dateTo;
+	
+/*
+	getStockDev("Astra Zeneca", |2003-12-08|, |2003-12-09|); 
+*/
+
+create function query6(Charstring stock_name1, Charstring stock_name2, Date dateFrom, Date dateTo) -> (Real sekDev1, Real sekDev2)
+	as
+	begin
+		set sekDev1 = getStockDev(stock_name1, dateFrom, dateTo);
+		set sekDev2 = getStockDev(stock_name2, dateFrom, dateTo);
+		return (sekDev1, sekDev2);
+	end;
+
+/*
+	query6("Astra Zeneca", "Ericsson B", |2003-12-08|, |2003-12-09|); 
+*/
+
+/*
+	7.	Return the person who has spent the maximum amount, in order to buy stock shares, in a specified period. 
+*/
+
+create function query7(Date dateFrom, Date dateTo) -> Charstring 
+	as 
+	begin
+		declare Real maxAmount;
+		set maxAmount = max(select stock_shares(p) * price(p) from Purchase p where date(p) >= dateFrom and date(p) <= dateTo);
+		return (select name(p) 
+		from Person p, Portfolio port
+		where id(p) = person(port) and id(port) in (select portfolio(p) from Purchase p where date(p) >= dateFrom and date(p) <= dateTo and stock_shares(p) * price(p) = maxAmount));
+	end;
+
+/*
+	query7(|2003-12-01|, |2003-12-09|); 
+*/
+
+/*
+	8.	Given a specific amount, return for each stock the number of shares that can be bought, and a prediction of possible profits/losses 
+		during the next two weeks, based on stock's behavior during the last two weeks. 
+*/
+
+create function query8(Real amount) -> (Charstring, Integer, Real)
+	as
+	begin
+		declare Date dateFrom, Date dateTo;
+		set dateFrom = min(select date(s) from Stock s);
+		set dateTo = max(select date(s) from Stock s);
+		return (select name(s1), integer(amount / late(s2) - 0.5), integer(amount / late(s2) - 0.5) * (late(s2) - late(s1)) 
+		from Stock s1, Stock s2 
+		where name(s1) = name(s2) and date(s1) = dateFrom and date(s2) = dateTo);
+	end;
+
+/*
+	query8(10000.00);
+*/
+
